@@ -39,6 +39,7 @@ available.
 
 ```py
 class Album:
+
     def __init__(self, date):
         self.release_date = date
 ```
@@ -91,7 +92,7 @@ object to tell us something about itself, we use methods. It would be great if
 we could do something like:
 
 ```py
-Album.count
+Album.album_count
 # 0
 ```
 
@@ -126,7 +127,9 @@ Let's create our class attribute now:
 
 ```py
 class Album:
+    
     album_count = 0
+
     def __init__(self, date):
         self.release_date = date
 ```
@@ -171,7 +174,9 @@ We can hook into this moment in time in our `__init__` method:
 
 ```py
 class Album:
+
     album_count = 0
+
     def __init__(self, date):
         Album.album_count += 1
         self.release_date = date
@@ -239,9 +244,11 @@ class itself:
 
 ```py
 class Album:
+
     album_count = 0
+
     def __init__(self, date):
-        increase_album_count()
+        self.increase_album_count()
         self.release_date = date
 
     @classmethod
@@ -258,63 +265,65 @@ than new objects.
 ## Class Constants
 
 One other type of variable that can be useful when building out classes is a
-**class constant**. Class constants have a lot in common with class variable.
-Both types of variable:
+**class constant**. Class constants have a lot in common with class attributes.
+Both constants and attributes:
 
-- Are defined in the body of the class
-- Can be accessed from within a class method
-- Can be accessed from within an instance method
+- Are defined in the body of the class.
+- Can be accessed from within a class method.
+- Can be accessed from within an instance method.
 
-A class constant looks a bit different than a class variable. It's defined using
+A class constant looks a bit different than a class attribute. It's defined using
 all capital letters, like so:
 
-```rb
-class User
-  ROLES = ["Admin", "Moderator", "Contributor"]
-end
+```py
+class User:
+    ROLES = ["Admin", "Moderator", "Contributor"]
 ```
 
-When deciding when to use a class constant or a class variable, the key
-distinction is that class constants are used to store data that _doesn't change_
-(is constant), while class variables are used to store data that does change.
+When deciding when to use a class constant or a class attribute, the key
+distinction is that class constants are used to store data that _doesn't
+change_ (is constant), while class attributes are used to store data that does
+change.
 
 For example, we could define a list of valid genres for our album class using
 a class constant:
 
-```rb
-class Album
-  GENRES = ["Hip-Hop", "Pop", "Jazz"]
+```py
+class Album:
 
-  @@album_count = 0
+    GENRES = ["Hip-Hop", "Pop", "Jazz"]
+    album_count = 0
 
-  def initialize(genre)
-    if GENRES.include?(genre)
-      @@album_count += 1
-    end
-  end
+    def __init__(self, genre, date):
+        if self.check_genre(genre):
+            self.increase_album_count()
+            self.genre = genre
+            self.release_date = date
 
-  def self.count
-    @@album_count
-  end
-end
+    @classmethod
+    def check_genre(cls, genre):
+        return genre in cls.GENRES
+
+    @classmethod
+    def increase_album_count(cls, increment=1):
+        cls.album_count += increment
 ```
 
 Scope-wise, class constants can _also_ be accessed from outside of the class
 using this syntax:
 
-```rb
-Album::GENRES
-# => ["Hip-Hop", "Pop", "Jazz"]
+```py
+Album.GENRES
+# ["Hip-Hop", "Pop", "Jazz"]
 ```
 
-Unlike in JavaScript, declaring a constant variable in Ruby doesn't actually
-prevent the variable from being reassigned (though it will give a warning
-message):
+Unlike in JavaScript, declaring a constant variable in Python doesn't actually
+prevent the variable from being reassigned:
 
-```rb
-Album::GENRES = "not an array anymore"
-# warning: already initialized constant Album::GENRES
-# => "not an array anymore"
+```py
+Album.GENRES = "not a list anymore"
+Album.GENRES
+# "not a list anymore"
 ```
 
 However, declaring a variable with a constant is still a good indicator to other
@@ -322,12 +331,12 @@ developers that they _shouldn't_ reassign the variable's value.
 
 ## Conclusion
 
-So far in our object-oriented Ruby code, we've focused on defining behavior that
-is specific to an individual instance of a class using **instance methods** and
-**instance variables**. By also using **class methods**, **class variables**,
-and **class constants**, we can expand on our classes' functionality by defining
-behavior that's not tied to one particular instance of a class, but is related
-more generally to the class itself.
+So far in our object-oriented Python code, we've focused on defining behavior
+that is specific to an individual instance of a class using **instance
+methods** and **instance attributes**. By also using **class methods**,
+**class attributes**, and **class constants**, we can expand on our classes'
+functionality by defining behavior that's not tied to one particular instance
+of a class, but is related more generally to the class itself.
 
 ## Resources
 
