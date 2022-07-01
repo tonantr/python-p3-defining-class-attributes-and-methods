@@ -34,16 +34,16 @@ behaviors.
 
 For example, let's say we have a class, `Album`. Every individual album instance
 should have a release date attribute. To accomplish this, we'll define an
-instance variable, `self.release_date` that stores and makes this information
+instance attribute, `self.release_date` that stores and makes this information
 available.
 
 ```py
 class Album:
-    def release_date(self, date):
+    def __init__(self, date):
         self.release_date = date
 ```
 
-Here we have an instance variable, `self.release_date`, which can be accessed
+Here we have an instance attribute, `self.release_date`, which can be accessed
 through dot notation on the instance itself:
 
 ```py
@@ -63,7 +63,7 @@ attributes and class methods.
 
 ***
 
-## Why Use Class Variables and Methods
+## Why Use Class Attributes and Methods
 
 Let's say you wanted to keep a counter for how many albums you had in your music
 collection. That way, you can brag to your friends about what a music aficionado
@@ -85,156 +85,175 @@ of the `Album` class to keep a count of all of the instances it produces.
 Now that we've decided whose job it is to enact the "keep a count of all albums"
 behavior, we can talk about _how_ we enact that behavior.
 
-We do so with the use of class variables and methods. Our goal is to be able to
-ask the `Album` class: "how many albums have you produced?" When we ask an
+We do so with the use of class attributes and methods. Our goal is to be able
+to ask the `Album` class: "how many albums have you produced?" When we ask an
 object to tell us something about itself, we use methods. It would be great if
 we could do something like:
 
-```ruby
+```py
 Album.count
+# 0
 ```
 
 ...and return the number of existing albums. Let's build out this capability
 now.
 
-## Building Class Methods and Using Class Variables
+***
 
-An **instance variable** is responsible for holding information regarding an
+## Building Class Methods and Using Class Attributes
+
+An **instance attribute** is responsible for holding information regarding an
 _instance_. It is a variable that is available in **scope** for all instance
 methods in the class.
 
-A **class variable** is accessible to the entire class — it has **class scope**.
-A class method is a method that is called on the class itself, not on the
-instances of that class.
+A **class attribute** is accessible to the entire class — it has **class
+scope**. A class method is a method that is called on the class itself, not on
+the instances of that class.
 
-Class variables are typically used to store information regarding the class as a
-whole and class methods enact behaviors that belong to the whole class, not just
-to individual instances of that class.
+Class attributes are typically used to store information regarding the class as
+a whole and class methods enact behaviors that belong to the whole class, not
+just to individual instances of that class.
 
-### Defining a Class Variable
+### Defining a Class Attribute
 
-A class variable looks like this: `@@variable_name`. Just like an instance or a
-local variable, you can set it equal to any type of data.
+A class attribute is declared using the same notation as anywhere else. We will
+simply say `album_count = 0`.
 
-Let's create a class variable, `@@album_count` and set it equal to `0`:
+What's important and what makes this a class attribute is where it is declared.
+**A class attribute must be declared outside of any methods in the class.**
 
-```ruby
-class Album
+Let's create our class attribute now:
 
-  @@album_count = 0
-
-  def release_date=(date)
-    @release_date = date
-  end
-
-  def release_date
-    @release_date
-  end
-end
+```py
+class Album:
+    album_count = 0
+    def __init__(self, date):
+        self.release_date = date
 ```
 
-Great, now we have a class variable to store our count of albums in. We can't
-yet access that variable from outside of our class though. How can we expose the
-contents of that variable? With a class method.
+Great, now we have a class attribute to store our count of albums in. Since any
+`Album` objects will be built from this class, we can access `album_count`
+through the `Album` class or any `Album` objects that we instantiate using dot
+notation.
+
+```py
+joshua_tree = Album(1987)
+joshua_tree.album_count
+# 0
+Album.album_count
+# 0
+```
+
+<details>
+
+<summary><em>If we enter the code <code>Album.album_count += 1</code>,
+what will <code>Album.album_count</code> become? How about
+<code>joshua_tree.album_count</code>?</em></summary>
+
+<p>
+<h3>Both will equal <code>1</code>.</h3>
+
+<p>When a Python class is modified, any objects that are instantiated from
+the class or inherit from it will refer back to the class to retrieve the
+values of any class attributes or methods.</p>
+</p>
+</details>
+<br/>
+
+The class attribute exists, but it should be updated whenever we add a new
+album. Let's build on this class to make it a bit smarter.
+
+### Manipulating Class Attributes From Instance Methods
+
+Our `album_count` is stuck at `0`. When and how should we increment it? The
+count of albums should go up as soon as a new album is created, or initialized.
+We can hook into this moment in time in our `__init__` method:
+
+```py
+class Album:
+    album_count = 0
+    def __init__(self, date):
+        Album.album_count += 1
+        self.release_date = date
+```
+
+Here we are using the `album_count` class attribute, inside of our
+`__init__` method, which is an instance method. We are saying: when a new
+album is created, access the `album_count` class attribute and increment its
+value by 1.
+
+Using our class name and dot notation, we can access our class attributes
+anywhere in our class: in both class and instance methods.
+
+Now our code should behave in the following manner:
+
+```py
+Album()
+Album()
+Album()
+
+Album.album_count
+# 3
+```
+
+We've got an instance method set up now to manipulate our `album_count` class
+attribute when we instantiate a new album. This is a very useful feature, but
+what if we already have an album collection and want to manipulate the
+`album_count` attribute without creating new `Album` objects?
 
 ### Defining a Class Method
 
 A class method is defined like this:
 
-```ruby
-def self.class_method_name
-  # some code
-end
+```py
+@classmethod
+def class_method_name(cls):
+    # some code
 ```
 
-Here, the `self` keyword refers to the **entire class itself**, _not to an
+<details>
+
+<summary><em>What is <code>@classmethod</code> telling the interpreter
+to do?</em></summary>
+
+<p>
+<h3><code>@classmethod</code> is a decorator that adds functionality to the
+method <code>class_method_name()</code>.</h3>
+
+<p>Remember that methods are a type of function, and functions are first class
+objects in Python. Decorators allow us to use our new function as an argument
+and a return value to provide it some additional out-of-the-box functionality.
+</p>
+</p>
+
+</details>
+<br/>
+
+Here, the `cls` keyword refers to the **entire class itself**, _not to an
 instance of the class_. In this case, we are inside the class only, not inside
 an instance method of that class. So, we are in the **class scope**, not the
 instance scope.
 
-Let's define a class method `.count` that returns the current count of albums.
+Let's refactor our `Album` class so that `album_count` can be changed by the
+class itself:
 
-```ruby
-class Album
-  @@album_count = 0
+```py
+class Album:
+    album_count = 0
+    def __init__(self, date):
+        increase_album_count()
+        self.release_date = date
 
-  def self.count
-    @@album_count
-  end
-end
+    @classmethod
+    def increase_album_count(cls, increment=1):
+        cls.album_count += increment
 ```
 
-Great, now if we call:
+Now we have an `Album` class that increases the number of albums as we get new
+ones, but that does so through a method connected to the class itself rather
+than new objects.
 
-```ruby
-Album.count
-```
-
-It will return `0`.
-
-### Operating On a Class Variable From an Instance Method
-
-Currently, however, our `@@album_count` is stuck at `0`. When and how should we
-increment it? The count of albums should go up as soon as a new album is
-created, or initialized. We can hook into this moment in time in our
-`#initialize` method:
-
-```ruby
-class Album
-  @@album_count = 0
-
-  def initialize
-    @@album_count += 1
-  end
-
-  def self.count
-    @@album_count
-  end
-end
-```
-
-Here we are using the `@@album_count` class variable, inside of our
-`#initialize` method, which is an instance method. We are saying: when a new
-album is created, access the `@@album_count` class variable and increment its
-value by 1.
-
-We can access our class variables anywhere in our class: in both class and
-instance methods.
-
-Now our code should behave in the following manner:
-
-```ruby
-Album.new
-Album.new
-Album.new
-
-Album.count
-  # => 3
-```
-
-If we were to write a similar class definition in JavaScript, here's how it
-might look:
-
-```js
-class Album {
-  static albumCount = 0;
-
-  constructor() {
-    Album.albumCount++;
-  }
-
-  static count() {
-    return this.albumCount;
-  }
-}
-
-new Album();
-new Album();
-new Album();
-
-Album.count();
-// => 3
-```
+***
 
 ## Class Constants
 
