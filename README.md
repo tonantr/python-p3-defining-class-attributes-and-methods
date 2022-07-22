@@ -50,7 +50,7 @@ through dot notation on the instance itself:
 ```py
 album = Album(1991)
 album.release_date
-# 1991
+# => 1991
 ```
 
 What you might not know, however, is that the **`Album` class itself is also an
@@ -92,7 +92,7 @@ we could do something like:
 
 ```py
 Album.album_count
-# 0
+# => 0
 ```
 
 ...and return the number of existing albums. Let's build out this capability
@@ -141,9 +141,9 @@ notation.
 ```py
 joshua_tree = Album(1987)
 joshua_tree.album_count
-# 0
+# => 0
 Album.album_count
-# 0
+# => 0
 ```
 
 <details>
@@ -313,7 +313,7 @@ using this syntax:
 
 ```py
 Album.GENRES
-# ["Hip-Hop", "Pop", "Jazz"]
+# => ["Hip-Hop", "Pop", "Jazz"]
 ```
 
 Unlike in JavaScript, declaring a constant variable in Python doesn't actually
@@ -322,7 +322,7 @@ prevent the variable from being reassigned:
 ```py
 Album.GENRES = "not a list anymore"
 Album.GENRES
-# "not a list anymore"
+# => "not a list anymore"
 ```
 
 However, declaring a variable with a constant is still a good indicator to other
