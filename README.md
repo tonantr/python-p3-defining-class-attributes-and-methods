@@ -48,8 +48,7 @@ Here we have an instance attribute, `self.release_date`, which can be accessed
 through dot notation on the instance itself:
 
 ```py
-album = Album()
-album.release_date = 1991
+album = Album(1991)
 album.release_date
 # 1991
 ```
