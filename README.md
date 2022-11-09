@@ -328,6 +328,8 @@ Album.GENRES
 However, declaring a variable with a constant is still a good indicator to other
 developers that they _shouldn't_ reassign the variable's value.
 
+***
+
 ## Conclusion
 
 So far in our object-oriented Python code, we've focused on defining behavior
@@ -336,6 +338,8 @@ methods** and **instance attributes**. By also using **class methods**,
 **class attributes**, and **class constants**, we can expand on our classes'
 functionality by defining behavior that's not tied to one particular instance
 of a class, but is related more generally to the class itself.
+
+***
 
 ## Resources
 
